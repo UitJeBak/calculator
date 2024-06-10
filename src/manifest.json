@@ -1,0 +1,10 @@
+{
+  "name": "Rekenmachine",
+  "icons": [
+    {
+      "src": "https://www.uitjebak.nl/content/themes/uitjebak/assets/img/favicons/favicon-32x32.png",
+      "type": "image/png",
+      "sizes": "32x32"
+    }
+  ]
+}
