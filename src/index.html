@@ -16,6 +16,11 @@
             touch-action: manipulation;
         }
 
+        html,
+        body {
+            overscroll-behavior-y: none;
+        }
+
         body {
             background-color: #141c2b;
             color: white;
@@ -57,7 +62,7 @@
             grid-column: auto;
             grid-row: auto;
             border: 2px solid #ffaf16;
-            padding: 4rem 1rem;
+            padding: 3rem 1rem;
             font-size: 150%;
             text-align: center;
             position: relative;
@@ -96,14 +101,14 @@
     <main>
         <div id="sum">0</div>
 
-        <div class="item" data-value="2.34">Product 1</div>
-        <div class="item" data-value="3.45">Product 2</div>
+        <div class="item" data-value="4.00">Product 1</div>
+        <div class="item" data-value="4.99">Product 2</div>
 
-        <div class="item" data-value="4.56">Product 3</div>
-        <div class="item" data-value="5.67">Product 4</div>
+        <div class="item" data-value="5.00">Product 3</div>
+        <div class="item" data-value="6.00">Product 4</div>
 
-        <div class="item" data-value="6.78">Product 5</div>
-        <div class="item" data-value="7.89">Product 6</div>
+        <div class="item" data-value="8.00">Product 5</div>
+        <div class="item" data-value="10.00">Product 6</div>
     </main>
 
     <script>
@@ -112,7 +117,10 @@
 
         const format = new Intl.NumberFormat("en-US", { maximumFractionDigits: 2, minimumFractionDigits: 2 });
 
+        let resetCount = 0;
+
         sum.onclick = function (event) {
+            resetCount++;
             sum.innerHTML = "0";
 
             for (let i = 0; i < products.length; i++) {
@@ -123,6 +131,8 @@
         for (let i = 0; i < products.length; i++) {
             products[i].dataset.count = '';
             products[i].onclick = function (event) {
+                resetCount = 0;
+
                 let currentValue = parseFloat(sum.innerHTML);
                 let currentCount = parseFloat(this.dataset.count) || 0;
 
@@ -137,7 +147,7 @@
         const registerServiceWorker = async () => {
             if ("serviceWorker" in navigator) {
                 try {
-                    const registration = await navigator.serviceWorker.register("service-worker.js", {
+                    const registration = await navigator.serviceWorker.register("/service-worker.js", {
                         scope: "/",
                     });
                     if (registration.installing) {
@@ -147,6 +157,14 @@
                     } else if (registration.active) {
                         console.log("Service worker active");
                     }
+
+                    sum.onmouseup = function (event) {
+                        if (resetCount >= 10 && resetCount % 10 == 0) {
+                            console.log("Reinstall service worker");
+                            registration.update();
+                        }
+                    }
+
                 } catch (error) {
                     console.error(`Registration failed with ${error}`);
                 }
