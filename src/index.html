@@ -5,10 +5,18 @@
     <title>Uit Je Bak! Rekenmachine</title>
     <meta name="viewport" content="width=device-width">
     <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" sizes="180x180"
+        href="https://www.uitjebak.nl/content/themes/uitjebak/assets/img/favicons/apple-touch-icon.png?x31686">
     <link rel="icon" type="image/png" sizes="32x32"
-        href="https://www.uitjebak.nl/content/themes/uitjebak/assets/img/favicons/favicon-32x32.png">
+        href="https://www.uitjebak.nl/content/themes/uitjebak/assets/img/favicons/favicon-32x32.png?x31686">
     <link rel="icon" type="image/png" sizes="16x16"
-        href="https://www.uitjebak.nl/content/themes/uitjebak/assets/img/favicons/favicon-16x16.png">
+        href="https://www.uitjebak.nl/content/themes/uitjebak/assets/img/favicons/favicon-16x16.png?x31686">
+    <link rel="manifest" href="https://www.uitjebak.nl/content/themes/uitjebak/assets/img/favicons/site.webmanifest">
+    <link rel="mask-icon"
+        href="https://www.uitjebak.nl/content/themes/uitjebak/assets/img/favicons/safari-pinned-tab.svg?x31686"
+        color="#141c2b">
+    <link rel="shortcut icon"
+        href="https://www.uitjebak.nl/content/themes/uitjebak/assets/img/favicons/favicon.ico?x31686">
     <style>
         * {
             font-size: 100%;
@@ -42,7 +50,7 @@
             padding: 1rem;
             font-size: 500%;
             text-align: right;
-            margin-bottom: 3rem;
+            margin-bottom: 2rem;
             position: relative;
         }
 
@@ -58,7 +66,9 @@
             text-align: left;
         }
 
-        .item {
+        .item,
+        #undo,
+        #delete {
             grid-column: auto;
             grid-row: auto;
             border: 2px solid #ffaf16;
@@ -94,54 +104,97 @@
             color: #bbb;
             padding: .1rem;
         }
+
+        #undo, #delete {
+            border-color: #d51c30;
+            padding: 2rem 1rem;
+            margin-bottom: 2rem;
+        }
+
+        main.delete .item,
+        main.delete #delete {
+            background: #d51c30;
+        }
     </style>
 </head>
 
 <body>
     <main>
-        <div id="sum">0</div>
+        <div id="sum"></div>
+
+        <div id="undo">Undo</div>
+        <div id="delete">Remove</div>
 
         <div class="item" data-value="4.00">Product 1</div>
         <div class="item" data-value="4.99">Product 2</div>
-
         <div class="item" data-value="5.00">Product 3</div>
         <div class="item" data-value="6.00">Product 4</div>
-
-        <div class="item" data-value="8.00">Product 5</div>
-        <div class="item" data-value="10.00">Product 6</div>
     </main>
 
     <script>
         const products = document.getElementsByClassName("item");
         const sum = document.getElementById("sum");
+        const undo = document.getElementById("undo");
+        const del = document.getElementById("delete");
+        const main = document.getElementsByTagName("main")[0];
 
         const format = new Intl.NumberFormat("en-US", { maximumFractionDigits: 2, minimumFractionDigits: 2 });
 
+        let productPrices = [];
+        let productList = [];
         let resetCount = 0;
+        let deleteMode = false;
 
         sum.onclick = function (event) {
             resetCount++;
-            sum.innerHTML = "0";
+            productList = [];
+            deleteMode = false;
+            applyState();
+        }
 
-            for (let i = 0; i < products.length; i++) {
-                products[i].dataset.count = '';
-            }
+        undo.onclick = function (event) {
+            productList.pop();
+            applyState();
+        }
+
+        del.onclick = function (event) {
+            deleteMode = !deleteMode;
+            applyState();
         }
 
         for (let i = 0; i < products.length; i++) {
+            let index = i;
             products[i].dataset.count = '';
+            productPrices.push(parseFloat(products[i].dataset.value));
             products[i].onclick = function (event) {
                 resetCount = 0;
 
-                let currentValue = parseFloat(sum.innerHTML);
-                let currentCount = parseFloat(this.dataset.count) || 0;
+                if (deleteMode) {
+                    const count = productList.filter(p => p.index == index).reduce((sum, p) => sum + p.count, 0);
+                    if (count > 0) {
+                        productList.push({ index: index, count: -1 });
+                    }
+                }
+                else {
+                    productList.push({ index: index, count: 1 });
+                }
 
-                currentValue += parseFloat(this.dataset.value);
-                currentCount += 1;
-
-                sum.innerHTML = format.format(currentValue);
-                this.dataset.count = currentCount;
+                applyState();
             };
+        }
+
+        function applyState() {
+            main.className = deleteMode ? 'delete' : '';
+
+            let totals = [0, 0, 0, 0];
+            productList.forEach(p => totals[p.index] += p.count);
+
+            totals = totals.map(total => Math.max(0, total));
+            totals.forEach((total, index) => products[index].dataset.count = total > 0 ? total : '');
+
+            let total = totals.reduce((sum, total, index) => sum + (total * productPrices[index]), 0);
+
+            sum.innerHTML = format.format(total);
         }
 
         const registerServiceWorker = async () => {
@@ -164,7 +217,6 @@
                             registration.update();
                         }
                     }
-
                 } catch (error) {
                     console.error(`Registration failed with ${error}`);
                 }
@@ -172,6 +224,7 @@
         };
 
         registerServiceWorker();
+        applyState();
 
     </script>
 </body>
