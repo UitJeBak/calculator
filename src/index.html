@@ -115,6 +115,12 @@
         main.delete #delete {
             background: #d51c30;
         }
+
+        #nietzeuren {
+            grid-column: 1 / span 2;
+            color: #bbb;
+            text-align: center;
+        }
     </style>
 </head>
 
@@ -125,10 +131,12 @@
         <div id="undo">Undo</div>
         <div id="delete">Remove</div>
 
-        <div class="item" data-value="4.00">Product 1</div>
-        <div class="item" data-value="4.99">Product 2</div>
-        <div class="item" data-value="5.00">Product 3</div>
-        <div class="item" data-value="6.00">Product 4</div>
+        <div class="item" data-value="3.70">Fris</div>
+        <div class="item" data-value="4.20">Bier</div>
+        <div class="item" data-value="3.70">Non-alcohol.</div>
+        <div class="item" data-value="5.50">Wijn &amp; Kriek</div>
+
+        <p id="nietzeuren">Prijzen zijn inclusief entree</p>
     </main>
 
     <script>
