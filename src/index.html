@@ -26,6 +26,7 @@
 
         html,
         body {
+            box-sizing: border-box;
             overscroll-behavior-y: none;
         }
 
@@ -72,10 +73,17 @@
             grid-column: auto;
             grid-row: auto;
             border: 2px solid #ffaf16;
-            padding: 3rem 1rem;
+            padding: 0.1rem;
             font-size: 150%;
             text-align: center;
             position: relative;
+        }
+
+        .item {
+            align-items: center;
+            display: flex;
+            height: 6rem;
+            justify-content: center;
         }
 
         .item::before {
@@ -107,7 +115,7 @@
 
         #undo, #delete {
             border-color: #d51c30;
-            padding: 2rem 1rem;
+            padding: 1rem;
             margin-bottom: 2rem;
         }
 
