@@ -146,7 +146,7 @@
         <div class="item" data-value="6.00">Wijn &amp; Kriek</div>
 
         <p id="nietzeuren">Prijzen zijn inclusief entree</p>
-        <p id="ooknietzeuren" class="item" data-value="0.10">Prijzen zijn inclusief plastic toeslag (&euro; 0.10)</p>
+        <p id="ooknietzeuren">Prijzen zijn inclusief plastic toeslag (&euro; 0.10)</p>
     </main>
 
     <script>
@@ -204,7 +204,7 @@
         function applyState() {
             main.className = deleteMode ? 'delete' : '';
 
-            let totals = [0, 0, 0, 0, 0];
+            let totals = [0, 0, 0, 0];
             productList.forEach(p => totals[p.index] += p.count);
 
             totals = totals.map(total => Math.max(0, total));
