@@ -48,10 +48,10 @@
             grid-column: 1 / span 2;
             grid-row: 1;
             border: 2px solid #fff;
-            padding: 1rem;
+            padding: 0;
             font-size: 500%;
             text-align: right;
-            margin-bottom: 2rem;
+            margin-bottom: 0;
             position: relative;
         }
 
@@ -73,7 +73,6 @@
             grid-column: auto;
             grid-row: auto;
             border: 2px solid #ffaf16;
-            padding: 0.1rem;
             font-size: 150%;
             text-align: center;
             position: relative;
@@ -84,7 +83,14 @@
             display: flex;
             height: 6rem;
             justify-content: center;
+
+            &.big {
+                grid-column: 2;
+                grid-row: 3 / 5;
+                height: auto;
+            }
         }
+
 
         div.item::before {
             content: attr(data-count);
@@ -116,7 +122,7 @@
         #undo, #delete {
             border-color: #d51c30;
             padding: 1rem;
-            margin-bottom: 2rem;
+            margin-bottom: 1rem;
         }
 
         main.delete .item,
@@ -126,7 +132,7 @@
 
         #nietzeuren, #ooknietzeuren {
             grid-column: 1 / span 2;
-            margin: .5rem 0 0;
+            margin: 0;
             color: #bbb;
             text-align: center;
         }
@@ -141,9 +147,10 @@
         <div id="delete">Remove</div>
 
         <div class="item" data-value="3.80">Fris</div>
-        <div class="item" data-value="4.30">Bier</div>
+        <div class="item big" data-value="4.30">Bier</div>
         <div class="item" data-value="4.30">Non-alcohol.</div>
         <div class="item" data-value="6.00">Wijn &amp; Kriek</div>
+        <div class="item" data-value="6.00">Seltzer</div>
 
         <p id="nietzeuren">Prijzen zijn inclusief entree</p>
         <p id="ooknietzeuren">Prijzen zijn inclusief plastic toeslag (&euro; 0.10)</p>
@@ -204,7 +211,7 @@
         function applyState() {
             main.className = deleteMode ? 'delete' : '';
 
-            let totals = [0, 0, 0, 0];
+            let totals = new Array(products.length).fill(0);
             productList.forEach(p => totals[p.index] += p.count);
 
             totals = totals.map(total => Math.max(0, total));
